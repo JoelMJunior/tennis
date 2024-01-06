@@ -12,18 +12,22 @@ public class GameController : MonoBehaviour
 
     public int[] lastTouch = new int[2]; // team, player
 
+    public float[] courtDimensions = new float[2];
+
     public float timeAwait = 1.5f, timeAwaiting;
     public int timeTrigger; 
 
     public Text score0Text, score1Text;
-    public Transform[] playersInCourt = new Transform[2]; // Inspector's reference // ~~ Atualizar para 12
+    public Transform[] playersInCourt = new Transform[2]; // Inspector's reference
+    public Transform sideCourt; // Inspector's reference
     public Ball ball; // Inspector's reference
 
 
     // Start is called before the first frame update
     void Start()
     {
-
+        courtDimensions[0] = sideCourt.lossyScale.x;
+        courtDimensions[1] = sideCourt.lossyScale.y;
     }
 
     // Update is called once per frame
@@ -44,8 +48,8 @@ public class GameController : MonoBehaviour
 
     public void Point(float[] ballPosition)
     {
-        float horizontalInside = 9f + (ball.transform.localScale.x) / 2;
-        float verticalInside = 4.5f + (ball.transform.localScale.y) / 2;
+        float horizontalInside = courtDimensions[0] + (ball.transform.localScale.x) / 2;
+        float verticalInside = courtDimensions[1] + (ball.transform.localScale.y) / 2;
 
         // ~~ Verificar caso a bola toque nas quinas da quadra. 
         if (Mathf.Abs(ballPosition[0]) < horizontalInside && Mathf.Abs(ballPosition[1]) < verticalInside)

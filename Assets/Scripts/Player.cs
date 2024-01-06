@@ -15,6 +15,7 @@ public class Player : MonoBehaviour
     public float[] initialPosition = new float[2]; // Inspector's reference
     public float[] servePosition = new float[2]; // Inspector's reference
     public float[] defensePosition = new float[2];
+    public float[] positioningPosition = new float[2];
     public float[] positionCourt = new float[2];
 
     // Jump
@@ -57,6 +58,15 @@ public class Player : MonoBehaviour
 
         initialPosition[0] = transform.position.x;
         initialPosition[1] = transform.position.y;
+
+        if (team == 0)
+        {
+            positioningPosition = new float[] { -6.40f, 0 };
+        }
+        else
+        {
+            positioningPosition = new float[] { 6.40f, 0 };
+        }
 
         originalScale = transform.localScale.x;
 
@@ -154,7 +164,7 @@ public class Player : MonoBehaviour
                 if (attackTrigger == 1)
                 {
                     float ang = AngAttack();
-                    Attack(20, ang); // ~~ Ajusta o valor 20
+                    Attack(25, ang); // ~~ Ajusta o valor 25
                 }
             }
         }
@@ -221,12 +231,14 @@ public class Player : MonoBehaviour
     public void StartDefense(float[] ballFutPos)
     {
         ballFuturePosition = ballFutPos;
+        Debug.Log(ballFutPos[0] +" "+ ballFutPos[1]);
         DisableAllTriggers();
 
         direction = CalcAngle(ballFutPos);
 
         int aux = BallComeToMySide(ballFutPos);
 
+        Debug.Log(aux);
         defenseTrigger = aux;
     }
     void Defense()
@@ -291,8 +303,8 @@ public class Player : MonoBehaviour
         float posX = transform.position.x;
         float posY = transform.position.y;
         
-        float angMin = Mathf.Atan((4.5f + posY) / posX); ;
-        float angMax = Mathf.Atan(-(4.5f - posY) / posX); ;
+        float angMin = Mathf.Atan((gameController.courtDimensions[1]/2 + posY) / posX); ;
+        float angMax = Mathf.Atan(-(gameController.courtDimensions[1]/2 - posY) / posX); ;
 
         if (team == 1)
         {
@@ -323,16 +335,8 @@ public class Player : MonoBehaviour
     }
     float[] CalcPosition(int team, int id)
     {
-        float[] newPosition;
-        if(team == 0)
-        {
-            newPosition = new float[] { -3, 0 };
-        }
-        else
-        {
-            newPosition = new float[] { 3, 0 };
-        }
-
+        // ~~ Improve to 2 players in team
+        float[] newPosition = positioningPosition;
         return newPosition;
     }
 
@@ -340,22 +344,22 @@ public class Player : MonoBehaviour
     {
         if (team == 0)
         {
-            if (ballFutPos[0] > 0 || ballFutPos[0] < -(9 + ball.transform.localScale.x/2))
+            if (ballFutPos[0] > 0 || ballFutPos[0] < -(gameController.courtDimensions[0] + ball.transform.localScale.x / 2))
             {
                 return 0;
             }
-            else if (Mathf.Abs(ballFutPos[1]) > (4.5f + ball.transform.localScale.y / 2))
+            else if (Mathf.Abs(ballFutPos[1]) > (gameController.courtDimensions[1]/2 + ball.transform.localScale.y / 2))
             {
                 return 0;
             }
         }
         else
         {
-            if (ballFutPos[0] < 0 || ballFutPos[0] > (9 + ball.transform.localScale.x / 2))
+            if (ballFutPos[0] < 0 || ballFutPos[0] > (gameController.courtDimensions[0] + ball.transform.localScale.x / 2))
             {
                 return 0;
             }
-            else if (Mathf.Abs(ballFutPos[1]) > (4.5f + ball.transform.localScale.y / 2))
+            else if (Mathf.Abs(ballFutPos[1]) > (gameController.courtDimensions[1]/2 + ball.transform.localScale.y / 2))
             {
                 return 0;
             }
